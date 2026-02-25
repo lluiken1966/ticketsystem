@@ -1,0 +1,16 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./wallet:/app/wallet:ro       # Oracle Autonomous DB wallet (read-only)
+      - uploads:/app/uploads          # Persistent file storage
+    env_file:
+      - .env.local
+    restart: unless-stopped
+
+volumes:
+  uploads:

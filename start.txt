@@ -1,0 +1,14 @@
+# 1. Install dependencies
+npm install
+
+# 2. Put your Oracle wallet files in the wallet/ folder
+
+# 3. Fill in .env.local (Oracle password, Anthropic key, SMTP)
+
+# 4. Create tables
+npm run db:migrate
+
+# 5. Create admin user
+npm run db:seed
+# 6. Start dev server
+npm run dev

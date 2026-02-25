@@ -1,0 +1,40 @@
+{
+  "name": "ticket-system",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:migrate": "ts-node -r tsconfig-paths/register src/db/migrate.ts",
+    "db:seed": "ts-node -r tsconfig-paths/register src/db/seed.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.36.3",
+    "bcryptjs": "^2.4.3",
+    "next": "14.2.30",
+    "next-auth": "^4.24.11",
+    "nodemailer": "^6.9.16",
+    "oracledb": "^6.7.1",
+    "primeflex": "^3.3.1",
+    "primeicons": "^7.0.0",
+    "primereact": "^10.9.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "reflect-metadata": "^0.2.2",
+    "typeorm": "^0.3.21",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^20.17.30",
+    "@types/nodemailer": "^6.4.17",
+    "@types/react": "^18.3.20",
+    "@types/react-dom": "^18.3.5",
+    "@types/uuid": "^10.0.0",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.8.2"
+  }
+}
