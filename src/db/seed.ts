@@ -1,44 +1,41 @@
 /**
- * Seeds the database with an initial admin user.
+ * Seeds the database with one user per role.
  *   npm run db:seed
- *
- * Default credentials:
- *   Email:    admin@ticketsystem.local
- *   Password: Admin123!
- *   (Change this immediately after first login)
  */
 import "reflect-metadata";
 import * as bcrypt from "bcryptjs";
 import { getDataSource } from "./data-source";
-import { User } from "./entities/User";
+import { User, UserRole } from "./entities/User";
+
+const SEED_USERS: { name: string; email: string; password: string; role: UserRole }[] = [
+  { name: "Administrator",   email: "admin@ticketsystem.local",     password: "Admin123!",     role: "ADMIN" },
+  { name: "Mees Manager",    email: "manager@ticketsystem.local",   password: "Manager123!",   role: "MANAGER" },
+  { name: "Dave Developer",  email: "developer@ticketsystem.local", password: "Developer123!", role: "DEVELOPER" },
+  { name: "Claire Client",   email: "client@ticketsystem.local",    password: "Client123!",    role: "CLIENT" },
+];
 
 async function seed() {
   const ds = await getDataSource();
   const userRepo = ds.getRepository(User);
 
-  const email = "admin@ticketsystem.local";
-  const existing = await userRepo.findOne({ where: { email } });
+  let created = 0;
+  let skipped = 0;
 
-  if (existing) {
-    console.log("Admin user already exists — skipping seed.");
-    await ds.destroy();
-    return;
+  for (const u of SEED_USERS) {
+    const existing = await userRepo.findOne({ where: { email: u.email } });
+    if (existing) {
+      console.log(`  skipped  ${u.role.padEnd(10)} — ${u.email} already exists`);
+      skipped++;
+      continue;
+    }
+
+    const passwordHash = await bcrypt.hash(u.password, 12);
+    await userRepo.save(userRepo.create({ name: u.name, email: u.email, passwordHash, role: u.role }));
+    console.log(`✓ created  ${u.role.padEnd(10)} — ${u.email}  /  ${u.password}`);
+    created++;
   }
 
-  const passwordHash = await bcrypt.hash("Admin123!", 12);
-  const admin = userRepo.create({
-    name: "Administrator",
-    email,
-    passwordHash,
-    role: "ADMIN",
-  });
-
-  await userRepo.save(admin);
-  console.log("✓ Admin user created:");
-  console.log("  Email:    admin@ticketsystem.local");
-  console.log("  Password: Admin123!");
-  console.log("  ⚠️  Change this password immediately after first login!");
-
+  console.log(`\nDone — ${created} created, ${skipped} skipped.`);
   await ds.destroy();
 }
 

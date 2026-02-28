@@ -8,14 +8,16 @@
     "start": "next start",
     "lint": "next lint",
     "db:migrate": "ts-node -r tsconfig-paths/register src/db/migrate.ts",
-    "db:seed": "ts-node -r tsconfig-paths/register src/db/seed.ts"
+    "db:seed": "ts-node -r tsconfig-paths/register src/db/seed.ts",
+    "db:seed-demo": "ts-node -r tsconfig-paths/register src/db/seed-demo.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.36.3",
     "bcryptjs": "^2.4.3",
-    "next": "14.2.30",
+    "chart.js": "^4.5.1",
+    "next": "^16.1.6",
     "next-auth": "^4.24.11",
-    "nodemailer": "^6.9.16",
+    "nodemailer": "^7.0.13",
     "oracledb": "^6.7.1",
     "primeflex": "^3.3.1",
     "primeicons": "^7.0.0",
@@ -30,6 +32,7 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.17.30",
     "@types/nodemailer": "^6.4.17",
+    "@types/oracledb": "^6.10.1",
     "@types/react": "^18.3.20",
     "@types/react-dom": "^18.3.5",
     "@types/uuid": "^10.0.0",

@@ -6,7 +6,7 @@ import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
-import { Card } from "primereact/card";
+import styles from "./login.module.css";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -40,51 +40,63 @@ export default function LoginPage() {
   }
 
   return (
-    <div
-      className="flex align-items-center justify-content-center"
-      style={{ minHeight: "100vh", background: "var(--surface-ground)" }}
-    >
+    <div className={styles.bg}>
       <Toast ref={toast} />
-      <Card
-        title="Ticket System"
-        subTitle="Sign in to continue"
-        style={{ width: "380px" }}
-      >
-        <form onSubmit={handleSubmit} className="flex flex-column gap-3">
-          <div className="flex flex-column gap-2">
-            <label htmlFor="email">Email</label>
-            <InputText
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full"
-              autoComplete="email"
-            />
+      <div className={styles.card}>
+        <div className={styles.logoWrap}>
+          <div className={styles.logoIcon}>
+            <i className="pi pi-ticket" />
           </div>
-          <div className="flex flex-column gap-2">
-            <label htmlFor="password">Password</label>
-            <Password
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              feedback={false}
-              toggleMask
-              required
-              className="w-full"
-              inputClassName="w-full"
-            />
+          <h1 className={styles.title}>Ticket System</h1>
+          <p className={styles.subtitle}>Sign in to your workspace</p>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div className={styles.fieldGroup}>
+            <label htmlFor="email" className={styles.label}>Email address</label>
+            <div className={styles.inputWrap}>
+              <InputText
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@company.com"
+                required
+                autoComplete="email"
+              />
+            </div>
           </div>
+
+          <div className={styles.fieldGroup}>
+            <label htmlFor="password" className={styles.label}>Password</label>
+            <div className={styles.inputWrap}>
+              <Password
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                feedback={false}
+                toggleMask
+                required
+                inputClassName="w-full"
+              />
+            </div>
+          </div>
+
           <Button
             type="submit"
             label="Sign In"
-            icon="pi pi-sign-in"
+            icon="pi pi-arrow-right"
+            iconPos="right"
             loading={loading}
-            className="w-full mt-2"
+            className={styles.btn}
           />
         </form>
-      </Card>
+
+        <p className={styles.footer}>
+          © {new Date().getFullYear()} Smart4Solutions · All rights reserved
+        </p>
+      </div>
     </div>
   );
 }

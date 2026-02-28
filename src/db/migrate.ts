@@ -3,7 +3,9 @@
  *   npm run db:migrate
  */
 import "reflect-metadata";
-import * as oracledb from "oracledb";
+import { config } from "dotenv";
+config({ path: ".env.local" });
+import oracledb from "oracledb";
 
 async function migrate() {
   const connString = process.env.ORACLE_SERVICE!;
@@ -13,6 +15,8 @@ async function migrate() {
     user: process.env.ORACLE_USER,
     password: process.env.ORACLE_PASSWORD,
     connectString: connString,
+    walletLocation: process.env.TNS_ADMIN,
+    walletPassword: process.env.ORACLE_WALLET_PASSWORD,
   });
 
   const ddlStatements = [

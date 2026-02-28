@@ -1,9 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ["oracledb", "typeorm"],
-  },
+  serverExternalPackages: ["oracledb", "typeorm"],
   webpack: (config, { isServer }) => {
     if (isServer) {
       // oracledb requires native bindings — keep it server-side only

@@ -1,5 +1,14 @@
 import "reflect-metadata";
+import { config } from "dotenv";
+config({ path: ".env.local" });
 import { DataSource } from "typeorm";
+import { DefaultNamingStrategy, NamingStrategyInterface } from "typeorm";
+
+class OracleNamingStrategy extends DefaultNamingStrategy implements NamingStrategyInterface {
+  columnName(propertyName: string, customName: string, embeddedPrefixes: string[]): string {
+    return super.columnName(propertyName, customName, embeddedPrefixes).toUpperCase();
+  }
+}
 import { User } from "./entities/User";
 import { Ticket } from "./entities/Ticket";
 import { TicketComment } from "./entities/TicketComment";
@@ -12,9 +21,14 @@ import { JobQueue } from "./entities/JobQueue";
 
 export const AppDataSource = new DataSource({
   type: "oracle",
+  namingStrategy: new OracleNamingStrategy(),
   username: process.env.ORACLE_USER,
   password: process.env.ORACLE_PASSWORD,
   connectString: process.env.ORACLE_SERVICE,
+  extra: {
+    walletLocation: process.env.TNS_ADMIN,
+    walletPassword: process.env.ORACLE_WALLET_PASSWORD,
+  },
   synchronize: false, // use migrations in production
   logging: process.env.NODE_ENV === "development",
   entities: [
