@@ -61,10 +61,10 @@ export default function TicketsPage() {
               optionLabel="label"
               optionValue="value"
             />
-            {role !== "MANAGER" && (
+            {role !== "MANAGER" || role === "ADMIN" ? (
               <Button label="New Ticket" icon="pi pi-plus"
                 onClick={() => router.push("/tickets/new")} />
-            )}
+            ) : null}
           </div>
         </div>
 

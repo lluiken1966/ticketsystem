@@ -52,6 +52,12 @@ export class Ticket {
   @Column({ name: "awaiting_client", type: "decimal", precision: 1, scale: 0, default: 0 })
   awaitingClient!: number;
 
+  @Column({ type: "decimal", precision: 1, scale: 0, default: 0 })
+  approved!: number;
+
+  @Column({ name: "branch_name", type: "varchar2", length: 255, nullable: true })
+  branchName!: string | null;
+
   @CreateDateColumn({ name: "created_at" })
   createdAt!: Date;
 

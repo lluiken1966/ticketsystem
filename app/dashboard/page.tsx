@@ -76,6 +76,7 @@ export default function DashboardPage() {
   };
 
   const role = (session?.user as any)?.role;
+  const isAdmin = role === "ADMIN";
 
   let displayTickets = data.recentTickets || [];
   if (filterStatus) displayTickets = displayTickets.filter((t: any) => t.status === filterStatus);
@@ -86,7 +87,7 @@ export default function DashboardPage() {
       <div className="flex flex-column gap-4">
         <div className="flex align-items-center justify-content-between">
           <h1 className="m-0 text-2xl font-bold">Dashboard</h1>
-          {role !== "MANAGER" && role !== "CLIENT" && (
+          {(role !== "MANAGER" && role !== "CLIENT") || role === "ADMIN" && (
             <Button label="New Ticket" icon="pi pi-plus" onClick={() => router.push("/tickets/new")} />
           )}
         </div>
@@ -126,7 +127,7 @@ export default function DashboardPage() {
         </div>
 
         {/* My Assigned Tickets */}
-        {(role === "DEVELOPER" || role === "ADMIN") && data.myTickets?.length > 0 && (
+        {(role === "DEVELOPER" || role === "ADMIN") && !isAdmin && data.myTickets?.length > 0 && (
           <Card title="My Assigned Tickets">
             <DataTable value={data.myTickets} stripedRows rowHover
               onRowClick={(e) => router.push(`/tickets/${e.data.id}`)}>
