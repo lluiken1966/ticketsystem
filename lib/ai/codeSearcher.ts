@@ -5,7 +5,8 @@ import { AiCodeAnalysis, CodeLocation } from "@/src/db/entities/AiCodeAnalysis";
 import { listRepoFiles, filterFilesByKeyword, getFileContent } from "@/lib/github";
 import type { DataSource } from "typeorm";
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
+const client = ANTHROPIC_KEY ? new Anthropic({ apiKey: ANTHROPIC_KEY }) : null;
 
 const MAX_FILE_CHARS = 4000; // chars per file to stay within Claude context
 const MAX_FILES_TO_ANALYZE = 8;
@@ -48,6 +49,17 @@ export async function analyzeCode(ticketId: number): Promise<void> {
 
   if (fileSnippets.length === 0) {
     await saveAnalysis(ds, ticketId, []);
+    return;
+  }
+  // If no Anthropic key, produce a simple heuristic-based analysis
+  if (!client) {
+    const locations: CodeLocation[] = fileSnippets.slice(0, 3).map((f, i) => ({
+      file_path: f.path,
+      start_line: 1,
+      end_line: Math.min(200, (f.content || "").split("\n").length),
+      explanation: `Heuristic match for ticket keywords: ${keywords.slice(0,3).join(", ")}`,
+    }));
+    await saveAnalysis(ds, ticketId, locations);
     return;
   }
 
