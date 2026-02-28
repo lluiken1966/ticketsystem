@@ -78,3 +78,59 @@ export function buildDeepLink(
 ): string {
   return `https://github.com/${owner}/${repo}/blob/main/${filePath}#L${startLine}-L${endLine}`;
 }
+
+/**
+ * Create a new branch in the GitHub repository.
+ * Returns the branch name and commit SHA.
+ */
+export async function createBranch(
+  branchName: string,
+  fromRef?: string
+): Promise<{ branchName: string; sha: string; url: string }> {
+  const { token, owner, repo } = getConfig();
+
+  // If fromRef is not provided, get the repository's default branch
+  let baseBranch = fromRef;
+  if (!baseBranch) {
+    const repoUrl = `${BASE}/repos/${owner}/${repo}`;
+    const repoRes = await fetch(repoUrl, { headers: authHeaders(token) });
+    if (!repoRes.ok) {
+      throw new Error(`Cannot get repo info: ${repoRes.status}`);
+    }
+    const repoData = await repoRes.json();
+    baseBranch = repoData.default_branch;
+  }
+
+  // Get the SHA of the reference (branch) we're creating from
+  const refUrl = `${BASE}/repos/${owner}/${repo}/git/refs/heads/${baseBranch}`;
+  const refRes = await fetch(refUrl, { headers: authHeaders(token) });
+  if (!refRes.ok) {
+    throw new Error(`Cannot get ref ${baseBranch}: ${refRes.status}`);
+  }
+  const refData = await refRes.json();
+  const sha = refData.object.sha;
+
+  // Now create the new branch
+  const createUrl = `${BASE}/repos/${owner}/${repo}/git/refs`;
+  const createRes = await fetch(createUrl, {
+    method: "POST",
+    headers: authHeaders(token),
+    body: JSON.stringify({
+      ref: `refs/heads/${branchName}`,
+      sha,
+    }),
+  });
+
+  if (!createRes.ok) {
+    const error = await createRes.json();
+    throw new Error(`Cannot create branch: ${error.message || createRes.status}`);
+  }
+
+  const createdBranch = await createRes.json();
+  return {
+    branchName,
+    sha: createdBranch.object.sha,
+    url: `https://github.com/${owner}/${repo}/tree/${branchName}`,
+  };
+}
+

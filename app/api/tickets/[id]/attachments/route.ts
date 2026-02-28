@@ -21,14 +21,15 @@ const ALLOWED_EXTENSIONS = new Set([
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const resolvedParams = await Promise.resolve(params);
   const userId = parseInt(session.user.id);
   const role = session.user.role;
-  const ticketId = parseInt(params.id);
+  const ticketId = parseInt(resolvedParams.id);
 
   if (isNaN(ticketId)) {
     return NextResponse.json({ error: "Invalid ticket ID" }, { status: 400 });

@@ -15,12 +15,14 @@ const VALID_PRIORITIES = new Set(["LOW", "MEDIUM", "HIGH", "CRITICAL"]);
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const ticketId = parseInt(params.id);
+  // Handle both promise and direct params (Next.js version compatibility)
+  const resolvedParams = await Promise.resolve(params);
+  const ticketId = parseInt(resolvedParams.id);
   const userId = parseInt(session.user.id);
   const role = session.user.role;
 

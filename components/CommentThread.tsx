@@ -45,9 +45,9 @@ export default function CommentThread({ comments, ticketId, userRole, onCommentA
   }
 
   function commentColor(c: Comment) {
-    if (c.isInternal) return "#fef9c3";
-    if (c.isClientQuestion) return "#eff6ff";
-    return "white";
+    if (c.isInternal) return "#3f3a1f";
+    if (c.isClientQuestion) return "#1e2f5a";
+    return "#1e2139";
   }
 
   const timelineEvents = comments.map((c) => ({
@@ -70,19 +70,19 @@ export default function CommentThread({ comments, ticketId, userRole, onCommentA
           content={(item) => (
             <Card
               className="mb-3"
-              style={{ background: commentColor(item), borderLeft: item.isInternal ? "3px solid #eab308" : item.isClientQuestion ? "3px solid #3b82f6" : undefined }}
+              style={{ background: commentColor(item), borderLeft: item.isInternal ? "3px solid #eab308" : item.isClientQuestion ? "3px solid #60a5fa" : "3px solid #64748b" }}
             >
               <div className="flex align-items-center justify-content-between mb-2">
                 <div className="flex align-items-center gap-2">
-                  <strong>{item.user?.name}</strong>
-                  <span className="text-xs text-color-secondary">{item.date}</span>
+                  <strong style={{ color: "#e2e8f0" }}>{item.user?.name}</strong>
+                  <span className="text-xs" style={{ color: "#94a3b8" }}>{item.date}</span>
                 </div>
                 <div className="flex gap-1">
                   {item.isInternal === 1 && <Tag value="Internal" severity="warning" style={{ fontSize: "10px" }} />}
                   {item.isClientQuestion === 1 && <Tag value="Question for Client" severity="info" style={{ fontSize: "10px" }} />}
                 </div>
               </div>
-              <p className="m-0" style={{ whiteSpace: "pre-wrap" }}>{item.content}</p>
+              <p className="m-0" style={{ whiteSpace: "pre-wrap", color: "#e2e8f0" }}>{item.content}</p>
             </Card>
           )}
           marker={() => <i className="pi pi-circle-fill text-primary" style={{ fontSize: "10px" }} />}
@@ -97,7 +97,7 @@ export default function CommentThread({ comments, ticketId, userRole, onCommentA
           placeholder="Write a comment..."
           className="w-full"
         />
-        {userRole !== "CLIENT" && (
+        {(userRole !== "CLIENT" || userRole === "ADMIN") && (
           <div className="flex gap-4">
             <div className="flex align-items-center gap-2">
               <Checkbox inputId="internal" checked={isInternal}

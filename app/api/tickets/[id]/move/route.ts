@@ -16,19 +16,20 @@ const VALID_TRANSITIONS: Record<TicketStatus, TicketStatus[]> = {
 
 export async function POST(
   req: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> | { id: string } }
 ) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const resolvedParams = await Promise.resolve(params);
   const role = session.user.role;
   const userId = parseInt(session.user.id);
+  const ticketId = parseInt(resolvedParams.id);
 
   if (role === "CLIENT" || role === "MANAGER") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const ticketId = parseInt(params.id);
   const { toStatus } = await req.json();
   const ds = await getDataSource();
 

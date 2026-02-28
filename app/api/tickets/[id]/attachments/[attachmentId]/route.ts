@@ -10,13 +10,14 @@ import { createReadStream } from "fs";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { id: string; attachmentId: string } }
+  { params }: { params: Promise<{ id: string; attachmentId: string }> | { id: string; attachmentId: string } }
 ) {
   const session = await getServerSession(authOptions);
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const ticketId = parseInt(params.id);
-  const attachmentId = parseInt(params.attachmentId);
+  const resolvedParams = await Promise.resolve(params);
+  const ticketId = parseInt(resolvedParams.id);
+  const attachmentId = parseInt(resolvedParams.attachmentId);
   const userId = parseInt(session.user.id);
   const role = session.user.role;
 
