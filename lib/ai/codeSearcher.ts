@@ -2,7 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { getDataSource } from "@/src/db/data-source";
 import { Ticket } from "@/src/db/entities/Ticket";
 import { AiCodeAnalysis, CodeLocation } from "@/src/db/entities/AiCodeAnalysis";
-import { listRepoFiles, filterFilesByKeyword, getFileContent } from "@/lib/bitbucket";
+import { listRepoFiles, filterFilesByKeyword, getFileContent } from "@/lib/github";
 import type { DataSource } from "typeorm";
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });

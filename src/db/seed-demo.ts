@@ -268,12 +268,12 @@ const TICKETS = [
     ],
   },
   {
-    title: "Wish: Bitbucket commit linking on tickets",
+    title: "Wish: GitHub commit linking on tickets",
     description:
-      "Developers should be able to link Bitbucket commits and pull requests to a ticket. This gives managers full traceability from business requirement to code change.",
+      "Developers should be able to link GitHub commits and pull requests to a ticket. This gives managers full traceability from business requirement to code change.",
     acceptanceCriteria:
-      "- Ticket detail page has a 'Linked commits' section\n- Developer can paste a Bitbucket PR or commit URL\n- System fetches PR title, status and author from Bitbucket API\n- Linked PRs show status badge (OPEN, MERGED, DECLINED)\n- Clicking a link opens Bitbucket in a new tab",
-    affectedModule: "Integrations / Bitbucket",
+      "- Ticket detail page has a 'Linked commits' section\n- Developer can paste a GitHub PR or commit URL\n- System fetches PR title, status and author from GitHub API\n- Linked PRs show status badge (OPEN, MERGED, CLOSED)\n- Clicking a link opens GitHub in a new tab",
+    affectedModule: "Integrations / GitHub",
     priority: "MEDIUM" as const,
     status: "OPEN" as const,
     creatorRole: "MANAGER",
@@ -281,7 +281,7 @@ const TICKETS = [
     history: ["OPEN"],
     comments: [
       { role: "MANAGER", text: "Right now I have no idea which code change corresponds to which ticket. Linking them would make code reviews much easier.", isClientQuestion: false },
-      { role: "DEVELOPER", text: "We already have a BITBUCKET_TOKEN in .env.local. The Bitbucket REST API v2 is well documented. This is mostly a UI task.", isInternal: true },
+      { role: "DEVELOPER", text: "We already have a GITHUB_TOKEN in .env.local. The GitHub REST API v3 is well documented. This is mostly a UI task.", isInternal: true },
     ],
   },
 ];

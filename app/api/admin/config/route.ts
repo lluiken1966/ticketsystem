@@ -6,7 +6,7 @@ import { AppConfig } from "@/src/db/entities/AppConfig";
 
 const ALLOWED_KEYS = [
   "smtp_host", "smtp_port", "smtp_user", "smtp_from",
-  "bitbucket_workspace", "bitbucket_repo",
+  "github_owner", "github_repo",
 ];
 
 export async function GET(req: NextRequest) {

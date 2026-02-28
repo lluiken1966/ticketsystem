@@ -150,11 +150,11 @@ export default function AdminPage() {
               </div>
             ))}
             <div className="col-12 mt-3">
-              <h3 className="text-lg font-semibold">Bitbucket</h3>
+              <h3 className="text-lg font-semibold">GitHub</h3>
             </div>
             {[
-              { key: "bitbucket_workspace", label: "Workspace Slug" },
-              { key: "bitbucket_repo", label: "Repository Slug" },
+              { key: "github_owner", label: "Owner / Organisation" },
+              { key: "github_repo", label: "Repository Name" },
             ].map(({ key, label }) => (
               <div key={key} className="col-12 md:col-6 flex flex-column gap-1">
                 <label>{label}</label>

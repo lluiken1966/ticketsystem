@@ -22,11 +22,11 @@ interface Props {
 export default function AiCodeAnalysisPanel({
   analysis, canTrigger, onTrigger, triggering
 }: Props) {
-  const workspace = process.env.NEXT_PUBLIC_BITBUCKET_WORKSPACE;
-  const repo = process.env.NEXT_PUBLIC_BITBUCKET_REPO;
+  const owner = process.env.NEXT_PUBLIC_GITHUB_OWNER;
+  const repo = process.env.NEXT_PUBLIC_GITHUB_REPO;
 
   function deepLink(filePath: string, start: number, end: number) {
-    return `https://bitbucket.org/${workspace}/${repo}/src/HEAD/${filePath}#lines-${start}:${end}`;
+    return `https://github.com/${owner}/${repo}/blob/main/${filePath}#L${start}-L${end}`;
   }
 
   return (
