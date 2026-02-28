@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   ManyToOne,
   JoinColumn,
+  RelationId,
 } from "typeorm";
 import { Ticket } from "./Ticket";
 import { User } from "./User";
@@ -18,7 +19,8 @@ export class TicketHistory {
   @JoinColumn({ name: "ticket_id" })
   ticket!: Ticket;
 
-  @Column({ name: "ticket_id", type: "number" })
+  // store foreign key id separately for easier querying
+  @RelationId((history: TicketHistory) => history.ticket)
   ticketId!: number;
 
   @Column({ name: "from_status", type: "varchar2", length: 20, nullable: true })
@@ -31,7 +33,7 @@ export class TicketHistory {
   @JoinColumn({ name: "changed_by_id" })
   changedBy!: User;
 
-  @Column({ name: "changed_by_id", type: "number" })
+  @RelationId((history: TicketHistory) => history.changedBy)
   changedById!: number;
 
   @CreateDateColumn({ name: "created_at" })

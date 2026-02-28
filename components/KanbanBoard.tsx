@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Card } from "primereact/card";
 import { Tag } from "primereact/tag";
@@ -30,17 +31,64 @@ interface Ticket {
 
 interface Props {
   tickets: Ticket[];
+  onTicketMoved?: () => void; // optional callback when a ticket changes lanes
 }
 
+// helper for server update
+async function moveTicketRequest(id: number, toStatus: string) {
+  const res = await fetch(`/api/tickets/${id}/move`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ toStatus }),
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || `Status ${res.status}`);
+  }
+  return res.json();
+}
 export default function KanbanBoard({ tickets }: Props) {
   const router = useRouter();
+  const [local, setLocal] = useState<Ticket[]>(tickets);
+
+  // keep in sync when prop changes
+  useEffect(() => {
+    setLocal(tickets);
+  }, [tickets]);
+
+  async function handleDrop(e: React.DragEvent<HTMLDivElement>, laneKey: string) {
+    e.preventDefault();
+    const idStr = e.dataTransfer.getData("text/plain");
+    const id = parseInt(idStr);
+    if (isNaN(id)) return;
+    try {
+      await moveTicketRequest(id, laneKey);
+      // update local copy
+      setLocal((prev) =>
+        prev.map((t) => (t.id === id ? { ...t, status: laneKey } : t))
+      );
+      onTicketMoved?.();
+    } catch (err: any) {
+      console.error("Move failed", err);
+      alert(`Cannot move ticket: ${err.message}`);
+    }
+  }
+
+  function allowDrop(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+  }
 
   return (
     <div className="flex gap-3 overflow-x-auto pb-3">
       {LANES.map((lane) => {
-        const laneTickets = tickets.filter((t) => t.status === lane.key);
+        const laneTickets = local.filter((t) => t.status === lane.key);
         return (
-          <div key={lane.key} style={{ minWidth: "260px", flex: "1" }}>
+          <div
+            key={lane.key}
+            style={{ minWidth: "260px", flex: "1" }}
+            onDragOver={allowDrop}
+            onDrop={(e) => handleDrop(e, lane.key)}
+          >
             <div
               className="flex align-items-center justify-content-between p-3 border-round-top"
               style={{ background: lane.color, color: "white" }}
@@ -55,6 +103,8 @@ export default function KanbanBoard({ tickets }: Props) {
               {laneTickets.map((ticket) => (
                 <Card
                   key={ticket.id}
+                  draggable={true}
+                  onDragStart={(e) => e.dataTransfer.setData("text/plain", ticket.id.toString())}
                   className="cursor-pointer hover:shadow-3 transition-all transition-duration-150"
                   onClick={() => router.push(`/tickets/${ticket.id}`)}
                   style={{ padding: "0" }}

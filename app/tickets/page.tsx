@@ -111,7 +111,7 @@ export default function TicketsPage() {
             <ProgressSpinner />
           </div>
         ) : view === "kanban" ? (
-          <KanbanBoard tickets={tickets} />
+          <KanbanBoard tickets={tickets} onTicketMoved={() => setLoading(true) || fetch(buildUrl()).then(r=>r.json()).then(d=>{setTickets(d); setLoading(false);})} />
         ) : (
           <DataTable value={tickets} paginator rows={15} stripedRows rowHover
             onRowClick={(e) => router.push(`/tickets/${e.data.id}`)}>
