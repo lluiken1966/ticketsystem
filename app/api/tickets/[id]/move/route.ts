@@ -54,10 +54,10 @@ export async function POST(
 
   // Record history
   const history = ds.getRepository(TicketHistory).create({
-    ticketId,
+    ticket: { id: ticketId },
     fromStatus,
     toStatus,
-    changedById: userId,
+    changedBy: { id: userId },
   });
   await ds.getRepository(TicketHistory).save(history);
 

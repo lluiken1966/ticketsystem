@@ -50,7 +50,7 @@ export async function GET(
       }),
       ds.getRepository(TicketAttachment).find({ where: { ticketId } }),
       ds.getRepository(TicketHistory).find({
-        where: { ticketId },
+        where: { ticket: { id: ticketId } },
         relations: ["changedBy"],
         order: { createdAt: "DESC" },
       }),
