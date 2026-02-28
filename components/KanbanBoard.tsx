@@ -41,11 +41,25 @@ async function moveTicketRequest(id: number, toStatus: string) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ toStatus }),
   });
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.error || `Status ${res.status}`);
+
+  // Some responses may be empty (204 or error without JSON). Read text first.
+  const text = await res.text();
+  let data: any = null;
+  if (text) {
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      // Not JSON
+      data = { _raw: text };
+    }
   }
-  return res.json();
+
+  if (!res.ok) {
+    const message = data?.error || data?._raw || `Status ${res.status}`;
+    throw new Error(message);
+  }
+
+  return data;
 }
 export default function KanbanBoard({ tickets }: Props) {
   const router = useRouter();
