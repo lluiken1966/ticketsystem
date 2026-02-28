@@ -14,6 +14,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.36.3",
     "bcryptjs": "^2.4.3",
+    "canvas-confetti": "^1.9.4",
     "chart.js": "^4.5.1",
     "next": "^16.1.6",
     "next-auth": "^4.24.11",
@@ -30,6 +31,7 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
+    "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^20.17.30",
     "@types/nodemailer": "^6.4.17",
     "@types/oracledb": "^6.10.1",

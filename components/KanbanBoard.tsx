@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { Card } from "primereact/card";
 import { Tag } from "primereact/tag";
 import { Badge } from "primereact/badge";
+import confetti from "canvas-confetti";
 
 const LANES = [
   { key: "OPEN", label: "Open", color: "#64748b" },
@@ -61,6 +62,82 @@ async function moveTicketRequest(id: number, toStatus: string) {
 
   return data;
 }
+// --------------- celebration helpers ---------------
+
+function launchFireworks() {
+  const duration = 3500;
+  const end = Date.now() + duration;
+
+  // Burst fireworks from random positions
+  const frame = () => {
+    confetti({
+      particleCount: 6,
+      angle: 60,
+      spread: 55,
+      origin: { x: 0, y: 0.65 },
+      colors: ["#ff595e", "#ffca3a", "#6a4c93", "#1982c4", "#8ac926"],
+    });
+    confetti({
+      particleCount: 6,
+      angle: 120,
+      spread: 55,
+      origin: { x: 1, y: 0.65 },
+      colors: ["#ff595e", "#ffca3a", "#6a4c93", "#1982c4", "#8ac926"],
+    });
+    if (Date.now() < end) requestAnimationFrame(frame);
+  };
+  frame();
+
+  // Central star bursts
+  setTimeout(() =>
+    confetti({ particleCount: 120, spread: 100, origin: { x: 0.5, y: 0.4 }, scalar: 1.2,
+      shapes: ["star"], colors: ["#ffd700", "#ff6b6b", "#4ecdc4", "#45b7d1"] }), 200);
+  setTimeout(() =>
+    confetti({ particleCount: 80, spread: 120, origin: { x: 0.3, y: 0.5 },
+      colors: ["#ff595e", "#ffca3a", "#8ac926"] }), 700);
+  setTimeout(() =>
+    confetti({ particleCount: 80, spread: 120, origin: { x: 0.7, y: 0.5 },
+      colors: ["#6a4c93", "#1982c4", "#ff595e"] }), 1100);
+}
+
+function playHappyMusic() {
+  const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+  if (!AudioCtx) return;
+  const ctx = new AudioCtx();
+
+  // Simple fanfare melody: C E G C(high) — then a little flourish
+  const notes = [
+    { freq: 523.25, start: 0.0,  dur: 0.18 }, // C5
+    { freq: 659.25, start: 0.2,  dur: 0.18 }, // E5
+    { freq: 783.99, start: 0.4,  dur: 0.18 }, // G5
+    { freq: 1046.5, start: 0.6,  dur: 0.40 }, // C6
+    { freq: 783.99, start: 0.85, dur: 0.12 }, // G5
+    { freq: 880.00, start: 1.0,  dur: 0.12 }, // A5
+    { freq: 1046.5, start: 1.15, dur: 0.55 }, // C6 (long)
+  ];
+
+  notes.forEach(({ freq, start, dur }) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "triangle";
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, ctx.currentTime + start);
+    gain.gain.linearRampToValueAtTime(0.25, ctx.currentTime + start + 0.02);
+    gain.gain.linearRampToValueAtTime(0, ctx.currentTime + start + dur);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(ctx.currentTime + start);
+    osc.stop(ctx.currentTime + start + dur + 0.05);
+  });
+}
+
+function celebrate() {
+  launchFireworks();
+  playHappyMusic();
+}
+
+// ---------------------------------------------------
+
 export default function KanbanBoard({ tickets, onTicketMoved }: Props) {
   const router = useRouter();
   const [local, setLocal] = useState<Ticket[]>(tickets);
@@ -81,6 +158,7 @@ export default function KanbanBoard({ tickets, onTicketMoved }: Props) {
       setLocal((prev) =>
         prev.map((t) => (t.id === id ? { ...t, status: laneKey } : t))
       );
+      if (laneKey === "DONE") celebrate();
       onTicketMoved?.();
     } catch (err: any) {
       console.error("Move failed", err);
