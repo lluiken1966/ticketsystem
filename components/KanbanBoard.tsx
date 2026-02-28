@@ -61,7 +61,7 @@ async function moveTicketRequest(id: number, toStatus: string) {
 
   return data;
 }
-export default function KanbanBoard({ tickets }: Props) {
+export default function KanbanBoard({ tickets, onTicketMoved }: Props) {
   const router = useRouter();
   const [local, setLocal] = useState<Ticket[]>(tickets);
 
